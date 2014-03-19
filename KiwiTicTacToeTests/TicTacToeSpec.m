@@ -129,7 +129,7 @@ typedef NS_ENUM(NSUInteger, TicTacToePositionOutcome) {
 }
 
 - (BOOL)haveWinner {
-    BOOL haveWinner = [self topRowWinner] || [self middleRowWinner] || [self bottomRowWinner] || [self firstColumnWinner] || [self secondColumnWinner] || [self thirdColumnWinner];
+    BOOL haveWinner = [self topRowWinner] || [self middleRowWinner] || [self bottomRowWinner] || [self firstColumnWinner] || [self secondColumnWinner] || [self thirdColumnWinner] || [self forwardDiagonalWinner] || [self backwardDiagonalWinner];
     return haveWinner;
 }
 
@@ -155,6 +155,14 @@ typedef NS_ENUM(NSUInteger, TicTacToePositionOutcome) {
 
 - (BOOL)thirdColumnWinner {
     return [self arePlayersInThreePositionsTheSamePositionOne:2 positionTwo:5 positionThree:8];
+}
+
+- (BOOL)forwardDiagonalWinner {
+    return [self arePlayersInThreePositionsTheSamePositionOne:0 positionTwo:4 positionThree:8];
+}
+
+- (BOOL)backwardDiagonalWinner {
+    return [self arePlayersInThreePositionsTheSamePositionOne:2 positionTwo:4 positionThree:6];
 }
 
 - (BOOL)arePlayersInThreePositionsTheSamePositionOne:(NSUInteger)positionOneIndex positionTwo:(NSUInteger)positionTwoIndex positionThree:(NSUInteger)positionThreeIndex {
@@ -289,15 +297,18 @@ describe(@"TicTacToe", ^{
     context(@"last position is taken", ^{
         
         it(@"should return TicTacToePositionOutcomeNoPositionsRemaining in completion", ^{
+            //    X0X
+            //    XX0
+            //    0X0
             [sut insertPlayer:TicTacToePlayerOne atPositionIndex:0 completion:nil];
             [sut insertPlayer:TicTacToePlayerTwo atPositionIndex:1 completion:nil];
             [sut insertPlayer:TicTacToePlayerOne atPositionIndex:2 completion:nil];
-            [sut insertPlayer:TicTacToePlayerTwo atPositionIndex:3 completion:nil];
-            [sut insertPlayer:TicTacToePlayerOne atPositionIndex:4 completion:nil];
             [sut insertPlayer:TicTacToePlayerTwo atPositionIndex:5 completion:nil];
-            [sut insertPlayer:TicTacToePlayerOne atPositionIndex:6 completion:nil];
-            [sut insertPlayer:TicTacToePlayerTwo atPositionIndex:7 completion:nil];
-            [sut insertPlayer:TicTacToePlayerOne atPositionIndex:8 completion:^(TicTacToePositionOutcome outcome, NSError *error) {
+            [sut insertPlayer:TicTacToePlayerOne atPositionIndex:3 completion:nil];
+            [sut insertPlayer:TicTacToePlayerTwo atPositionIndex:6 completion:nil];
+            [sut insertPlayer:TicTacToePlayerOne atPositionIndex:4 completion:nil];
+            [sut insertPlayer:TicTacToePlayerTwo atPositionIndex:8 completion:nil];
+            [sut insertPlayer:TicTacToePlayerOne atPositionIndex:7 completion:^(TicTacToePositionOutcome outcome, NSError *error) {
                 [[theValue(outcome) should] equal:theValue(TicTacToePositionOutcomeNoPositionsRemaining)];
             }];
         });
@@ -378,6 +389,32 @@ describe(@"TicTacToe", ^{
             [sut insertPlayer:TicTacToePlayerOne atPositionIndex:5 completion:nil];
             [sut insertPlayer:TicTacToePlayerTwo atPositionIndex:3 completion:nil];
             [sut insertPlayer:TicTacToePlayerOne atPositionIndex:8 completion:^(TicTacToePositionOutcome outcome, NSError *error) {
+                [[theValue(outcome) should] equal:theValue(TicTacToePositionOutcomeWin)];
+            }];
+        });
+    });
+    
+    context(@"playerOne has Winning Forward Diagonal", ^{
+        
+        it(@"should return TicTacToePositionOutcomeWin in completion", ^{
+            [sut insertPlayer:TicTacToePlayerOne atPositionIndex:0 completion:nil];
+            [sut insertPlayer:TicTacToePlayerTwo atPositionIndex:1 completion:nil];
+            [sut insertPlayer:TicTacToePlayerOne atPositionIndex:4 completion:nil];
+            [sut insertPlayer:TicTacToePlayerTwo atPositionIndex:3 completion:nil];
+            [sut insertPlayer:TicTacToePlayerOne atPositionIndex:8 completion:^(TicTacToePositionOutcome outcome, NSError *error) {
+                [[theValue(outcome) should] equal:theValue(TicTacToePositionOutcomeWin)];
+            }];
+        });
+    });
+    
+    context(@"playerOne has Winning Backward Diagonal", ^{
+        
+        it(@"should return TicTacToePositionOutcomeWin in completion", ^{
+            [sut insertPlayer:TicTacToePlayerOne atPositionIndex:2 completion:nil];
+            [sut insertPlayer:TicTacToePlayerTwo atPositionIndex:1 completion:nil];
+            [sut insertPlayer:TicTacToePlayerOne atPositionIndex:4 completion:nil];
+            [sut insertPlayer:TicTacToePlayerTwo atPositionIndex:3 completion:nil];
+            [sut insertPlayer:TicTacToePlayerOne atPositionIndex:6 completion:^(TicTacToePositionOutcome outcome, NSError *error) {
                 [[theValue(outcome) should] equal:theValue(TicTacToePositionOutcomeWin)];
             }];
         });
