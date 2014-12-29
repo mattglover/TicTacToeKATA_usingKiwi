@@ -222,7 +222,7 @@ describe(@"TTTTicTacToe", ^{
             [sut insertPlayer:TicTacToePlayerOne atPositionIndex:4 completion:nil];
             [sut insertPlayer:TicTacToePlayerTwo atPositionIndex:3 completion:nil];
             [sut insertPlayer:TicTacToePlayerOne atPositionIndex:6 completion:^(TicTacToePositionOutcome outcome, NSError *error) {
-                [[theValue(outcome) should] equal:theValue(TicTacToePositionOutcomeWin)];
+                [[theValue(outcome) should] equal:theValue(TicTacToePositionOutcomeNoWin)];
             }];
         });
     });
